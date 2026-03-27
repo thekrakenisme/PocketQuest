@@ -890,14 +890,12 @@ function renderCombatScreen() {
 
 function render() {
   root.innerHTML = appState.screen === "setup" ? renderSetupScreen() : renderCombatScreen();
+  bindActionButtons();
   const logPanel = document.querySelector("#log-panel");
   if (logPanel) logPanel.scrollTop = logPanel.scrollHeight;
 }
 
-root.addEventListener("click", (event) => {
-  const button = event.target.closest("[data-action]");
-  if (!button) return;
-
+function handleAction(button) {
   const action = button.dataset.action;
   if (action === "select-preset") {
     appState.selectedPreset = button.dataset.id;
@@ -920,6 +918,19 @@ root.addEventListener("click", (event) => {
   } else if (action === "restart") {
     restartCombat();
   }
-});
+}
+
+function bindActionButtons() {
+  const actionButtons = root.querySelectorAll("[data-action]");
+  for (const button of actionButtons) {
+    button.onpointerdown = (event) => {
+      event.preventDefault();
+      handleAction(button);
+    };
+    button.onclick = (event) => {
+      event.preventDefault();
+    };
+  }
+}
 
 render();
