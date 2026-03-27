@@ -1,0 +1,333 @@
+# EverQuest-Inspired Text RPG: Combat Research & Simulator Plan
+
+## Part 1: The Anatomy of Classic EQ Combat
+
+### The Tick — The Heartbeat of Norrath
+
+Everything in classic EverQuest runs on a **6-second server tick**. This is the pulse of the world. Every 6 seconds:
+- HP regeneration fires (base: 1 HP/tick standing, more sitting; Trolls/Iksar get innate regen bonus)
+- Mana regeneration fires (base: 1 mana/tick standing; sitting + Meditate skill dramatically increases this)
+- DoT damage lands
+- HoT healing lands  
+- Buff durations count down
+
+This 6-second rhythm is *felt* by the player even when they don't consciously track it. It creates a subconscious cadence — a metronome underneath every encounter.
+
+### Weapon Delay — The Rhythm of Auto-Attack
+
+Weapons have two core stats: **Damage** and **Delay**.
+
+- **Delay** is measured in tenths of a second. A delay of 24 means the weapon swings every 2.4 seconds. A delay of 40 means every 4.0 seconds.
+- **Damage** is the base maximum. A hit deals between 1 and (2 × Damage), giving a wide variance.
+- **Damage Bonus** is added to primary-hand weapons for melee classes above ~level 28: roughly `(Level - 25) / 3`. Two-handers get a larger bonus scaled to delay.
+
+The core DPS estimation: `(2 × Damage + DamageBonus) / Delay`
+
+This means two weapons with identical damage-to-delay *ratios* can feel completely different. A 7/20 (fast, light) weapon pitter-patters with frequent small hits. A 21/40 (slow, heavy) weapon lands thunderous blows with long pauses. Both deal similar DPS, but the *feel* is radically different.
+
+**For our text game, this is gold.** Fast weapons produce rapid combat log entries. Slow weapons create tension in the silence between swings, then deliver satisfying payoffs.
+
+### The Damage Interval (DI) System
+
+EQ doesn't use a simple random range for damage. It uses 20 discrete "damage intervals." When you hit, the game rolls which of 20 DI slots you land on. Your AC shifts the *distribution* — high AC means most hits land on the lower DI slots. Low AC means the distribution flattens, and max hits become common.
+
+This creates a non-obvious but deeply *felt* effect: upgrading armor doesn't just reduce damage — it changes the *texture* of incoming damage. With bad armor, you get spiked. With good armor, incoming damage feels like a steady, manageable stream.
+
+### Combat Skills — The Player's Active Choices
+
+Auto-attack is passive. The player's *active* contribution comes from combat skills on independent cooldowns:
+
+| Skill | Cooldown | Who Gets It | What It Does |
+|-------|----------|-------------|--------------|
+| **Kick** | ~6s | Warriors, Rangers, Monks, etc. | Small damage, can interrupt casters |
+| **Bash** | ~6s | Warriors, Paladins, SKs (requires shield or 2H) | Damage + stun chance, interrupts |
+| **Taunt** | ~6s | Warriors, Paladins, SKs | Generates aggro, forces mob to attack you |
+| **Backstab** | ~12s | Rogues (must be behind target with piercer) | Massive damage multiplied by weapon damage |
+| **Flying Kick** | ~6s | Monks (level 25+) | Good damage |
+| **Slam** | ~6s | Large races (Ogre, Troll, Barbarian) without shield | Stun + interrupt |
+
+The key insight: **these don't compete with auto-attack.** They fire *between* auto-attack swings. The player's job is to weave these abilities into the gaps. Miss a kick? That's lost DPS you'll never get back. The pacing creates a gentle but constant pressure to stay engaged.
+
+### Spellcasting — Risk and Reward
+
+Spells have:
+- **Cast Time**: 0.5s to 10+ seconds (Complete Heal is 10 seconds!)
+- **Mana Cost**: The primary resource bottleneck
+- **Recast Time**: Some spells have cooldowns beyond cast time
+- **Fizzle Chance**: Based on level vs. spell level and specialization
+- **Interrupt Risk**: Getting hit during casting can interrupt (Channeling skill gives a chance to push through)
+
+The tension of casting in combat is enormous. A cleric deciding to cast Complete Heal knows:
+- 10 seconds of vulnerability
+- Any hit could interrupt it
+- The tank might die in those 10 seconds if the heal is needed NOW
+- But if it lands, it's a full heal
+
+**For our text game**: Cast times create natural dramatic beats. The player commits to an action and watches the combat log scroll while holding their breath.
+
+### The Mana Economy
+
+Classic EQ's mana economy is *punishing*:
+- Standing regen: 1 mana/tick (6 seconds)
+- Sitting (meditating) with maxed skill: ~20 mana/tick
+- A level 50 caster might have 2000-3000 mana
+- Full med from empty: 10-15 minutes without buffs
+- Clarity (Enchanter buff): +7-9 mana/tick — a *massive* difference
+
+This means every spell cast has real cost. A wizard who unloads their mana bar in 90 seconds of glorious nuking then sits for 12 minutes meditating. Efficiency matters. Choosing when NOT to cast is as important as choosing when to cast.
+
+### Aggro / Hate — The Invisible Tug of War
+
+Mobs maintain a hate list. Whoever has the most hate gets attacked. Hate is generated by:
+- Melee damage (proportional to potential damage per swing)
+- Spell damage
+- Healing (generates hate on all mobs in combat)
+- Taunt skill (direct hate generation)
+- Buffs cast during combat
+
+Tanks must actively maintain aggro. If the wizard crits a huge nuke, the mob may turn and one-shot them. This creates a social dynamic even in our single-player text game if we model companions or pets.
+
+### What Makes a Fight Feel "EQ"
+
+1. **The slow open**: Pull a mob. It runs at you. First swing lands. Auto-attack begins its rhythm.
+2. **The initial volley**: Caster debuffs land (Slow is crucial — reducing mob attack speed by 40-70%). Tank establishes aggro.
+3. **The grind**: 30-120 seconds of auto-attack, weaving in kicks/bashes, watching HP bars. Healer manages mana. DPS watches aggro.
+4. **The crisis point**: Something goes wrong — a resist on slow, an add, the healer's mana getting low. Decisions must be made.
+5. **The resolution**: Mob health hits 20% and it tries to flee. Chase it down. Or it dies. Loot drops.
+6. **The recovery**: Sit to med. Bind wounds. Rebuff if needed. 30-90 seconds of downtime before the next pull.
+
+The cycle of **tension → release → recovery** is the fundamental loop, and the downtime makes the combat feel more meaningful.
+
+---
+
+## Part 2: Translating to Text — Lessons from Caves of Qud
+
+### The Qud Approach to Combat Text
+
+Caves of Qud uses several techniques we should adopt:
+
+1. **Archaic and specific vocabulary**: Not "you hit the enemy" but "you strike the snapjaw scavenger." Weapons have verb associations — swords slash, maces crush, daggers pierce.
+2. **Penetration language**: Qud makes armor feel physical. "The cave spider fails to penetrate your armor" — you *feel* the armor working.
+3. **Numeric transparency with flavor**: "You hit (4x) for 9 damage with your iron long sword →6/6 1d4 [24]" — the numbers are there for those who want them, wrapped in context.
+4. **Color as information**: Different colors for player damage, enemy damage, system messages, critical events.
+
+### Our Text Style Guide (Draft)
+
+**Weapon Verbs by Type:**
+- 1H Slashing: *slashes, cuts, carves, rakes, scores*
+- 2H Slashing: *cleaves, hews, rends, sweeps*
+- 1H Blunt: *strikes, cracks, hammers, smashes*
+- 2H Blunt: *crushes, shatters, pounds, demolishes*
+- Piercing: *stabs, pierces, punctures, thrusts, drives*
+- Hand to Hand: *punches, strikes, jabs, hooks, snaps*
+
+**Damage Severity Language:**
+- Trivial (1-5% of max HP): "grazes", "nicks", "scratches"
+- Light (5-15%): "strikes", "hits", "catches"  
+- Moderate (15-30%): "smashes", "carves into", "drives deep"
+- Heavy (30-50%): "devastates", "rips through", "shatters"
+- Critical/Massive (50%+): "obliterates", "tears apart", unique per-weapon descriptions
+
+**Miss Language Variety:**
+- "The gnoll narrowly evades your swing"
+- "Your blade finds only air"
+- "The orc twists aside at the last moment"
+- "You overextend, leaving yourself open"
+
+**Defensive Events:**
+- Parry: "You deflect the gnoll's clumsy thrust with [weapon name]"
+- Dodge: "You pivot clear of the orc's overhead swing"
+- Block: "Your [shield name] absorbs the blow with a dull clang"
+- Riposte: "You catch the skeleton's blade on your guard and counter!"
+
+---
+
+## Part 3: Combat Simulator Design — The Vertical Slice
+
+### Scope
+
+A single-player combat encounter: **one player character vs. one mob**, with full combat log output. The goal is to nail the *feel* before expanding to groups, multiple mobs, or progression systems.
+
+### Core Systems to Implement
+
+#### 1. The Clock
+- Real-time simulation running on a configurable tick rate
+- 6-second ticks for regen/DoTs/buffs
+- Weapon delay governs auto-attack timing (each weapon independently)
+- Ability cooldowns tracked independently
+- Spell cast times create "casting" state with interrupt vulnerability
+
+#### 2. Character Model
+```
+Character {
+  name, race, class, level
+  stats: { STR, STA, AGI, DEX, WIS, INT, CHA }
+  hp: { current, max }
+  mana: { current, max }  // null for pure melee
+  ac: number
+  attack: number
+  
+  equipment: {
+    primary: Weapon
+    secondary: Weapon | Shield | null
+    // ... armor slots
+  }
+  
+  skills: {
+    offense: number
+    defense: number
+    [weaponType]: number  // 1h_slash, 2h_blunt, etc.
+    dualWield: number | null
+    doubleAttack: number | null
+    kick: number | null
+    bash: number | null
+    // ... etc
+  }
+  
+  spells: Spell[]  // memorized spells (max 8)
+  buffs: Buff[]
+  
+  combatState: IDLE | COMBAT | CASTING | SITTING
+}
+```
+
+#### 3. Weapon Model
+```
+Weapon {
+  name: string
+  lore: string           // flavor description
+  history: string[]      // revealed over time/use
+  type: SLASH_1H | SLASH_2H | BLUNT_1H | BLUNT_2H | PIERCE | H2H
+  damage: number
+  delay: number          // in tenths of a second
+  proc: { spell, level } | null
+  stats: {}              // stat bonuses
+  ismagic: boolean
+  islore: boolean
+}
+```
+
+#### 4. Mob Model
+```
+Mob {
+  name: string
+  level: number
+  hp: { current, max }
+  ac: number
+  minDamage: number
+  maxDamage: number
+  attackDelay: number
+  specialAttacks: []     // enrage, flurry, rampage, etc.
+  fleesAtPercent: number  // usually 20%
+  resistances: { magic, fire, cold, poison, disease }
+  lootTable: []
+}
+```
+
+#### 5. Combat Resolution
+
+**Attack Round (per swing):**
+1. Check hit/miss: attacker's ATK + offense skill vs. defender's AC + defense skill
+2. If hit: roll damage in range [1, 2×weaponDamage] + damageBonus (primary only)
+3. Check for critical hit (class/level dependent)
+4. Check for proc (DEX-based chance)
+5. Apply damage, check for death
+
+**Defender's Check (before damage):**
+1. Riposte check (if skill exists) — if success, attacker takes a free counter-hit
+2. Parry check
+3. Dodge check  
+4. Block check (shield required)
+5. If all fail, damage applies
+
+**Ability Resolution:**
+- Kick: instant damage based on level, 6s cooldown, can interrupt mob casting
+- Bash: instant damage, stun chance, 6s cooldown, requires shield or 2H
+- Taunt: hate generation, 6s cooldown
+
+#### 6. The Combat Log — The Core Output
+
+This is where the game *lives*. Every event produces descriptive text:
+
+```
+[Round 1 — 0.0s]
+You engage a moss snake.
+
+[2.4s] You slash a moss snake for 12 damage with your Rusty Short Sword.
+[3.0s] A moss snake bites YOU for 4 damage.
+[4.8s] You slash a moss snake for 8 damage.
+[6.0s] You kick a moss snake for 3 damage!
+[6.0s] A moss snake bites YOU for 6 damage.
+        ── tick ── HP: 84/94 ──
+[7.2s] Your blade finds only air.
+[9.0s] A moss snake bites YOU for 2 damage. (You barely feel it.)
+[9.6s] You carve into a moss snake for 19 damage! (Critical!)
+[12.0s] You kick a moss snake for 5 damage!
+[12.0s] A moss snake tries to bite you, but misses!
+         ── tick ── HP: 78/94 ──
+[12.0s] A moss snake tries to flee!
+[14.4s] You slash a moss snake for 11 damage.
+        A moss snake has been slain!
+        You gain experience!
+```
+
+### Implementation: The Simulator UI
+
+For the vertical slice, I recommend a **React-based web app** with:
+
+1. **Character Setup Panel**: Choose a preset class/race/level combo, or customize
+2. **Mob Selection**: Choose from a curated list of classic-feeling mobs
+3. **Combat Log**: The star of the show — scrolling, color-coded, richly descriptive text
+4. **Status Bars**: HP/Mana bars for both player and mob, updating in real-time
+5. **Action Bar**: Clickable abilities (Kick, Bash, Taunt, spell slots) that light up when available
+6. **Speed Controls**: 1x, 2x, 5x, pause — for testing and tuning
+
+### Tuning Knobs (What We'll Iterate On)
+
+These are the dials we'll turn to get the feel right:
+
+| Parameter | EQ Value | Our Starting Point | Notes |
+|-----------|----------|-------------------|-------|
+| Tick rate | 6s | 6s | Core rhythm, probably stays |
+| Base weapon delays | 20-45 | 20-45 | In tenths of seconds |
+| Fight duration vs white con | 30-120s | 45-90s | Target for solo melee |
+| HP regen/tick (combat) | ~1 | 0-1 | Almost nothing in EQ |
+| Mana regen/tick (standing) | 1 | 1 | Punishing by design |
+| Miss rate vs even con | ~20-30% | 25% | Depends on gear |
+| Kick/Bash cooldown | 6s | 6s | Matches tick |
+| Critical hit chance | ~3-7% | 5% | Warriors only at first |
+
+### Starter Content for the Slice
+
+**3 Character Presets:**
+1. **Human Warrior, Level 10** — Sword and shield, plate armor. Kick, Bash, Taunt.
+2. **Dark Elf Shadow Knight, Level 10** — Greatsword, chain armor. Kick, Bash, plus a few spells (Lifetap, Disease DoT).
+3. **High Elf Cleric, Level 10** — Mace and shield, chain armor. Bash, plus healing and buff spells.
+
+**3 Mob Types:**
+1. **Moss Snake** (Level 5) — Easy, fast attacker, low HP. A warmup.
+2. **Decaying Skeleton** (Level 10) — Even con, moderate. The "feel" test.
+3. **Orc Centurion** (Level 14) — Dangerous. Tests whether "red con" feels scary.
+
+**5-6 Starter Weapons** (bespoke, with lore):
+1. *Rusty Short Sword* — 4/24, common trash. "The edge is more suggestion than reality."
+2. *Cracked Darkwood Staff* — 6/35, 2H blunt. "Fissures run its length like dry riverbeds."  
+3. *Bone-Handled Mace* — 5/28, 1H blunt. "The bone grip is human. You try not to think about it."
+4. *Tarnished Rapier* — 5/22, piercing. "Beneath the tarnish, faint scrollwork. Someone cared about this blade, once."
+5. *Gnollish Cleaver* — 7/32, 1H slash. "Crude but honest. It was made to do one thing."
+6. *Barbed Whip* — 3/18, 1H slash, proc: minor DoT. "LORE: The barbs are not metal. They're teeth."
+
+---
+
+## Part 4: Next Steps After the Simulator
+
+Once combat *feels right*, we expand in this order:
+
+1. **Multiple mob difficulty tiers** — dial in the con system (green → red)
+2. **Group combat** — add a companion (cleric healer, or tank if player is caster)
+3. **Spell system depth** — full cast time / interrupt / fizzle model
+4. **Equipment progression** — "you found [Gnollish Cleaver]" moments that feel earned
+5. **The dev tooling** — item/mob/spell editor with visual browser, sort, filter, and report generation
+6. **Lore/history system** — weapons that reveal their backstory as you use them
+7. **Full class differentiation** — the 12+ classes that make EQ special
+8. **Zone/area system** — moving between areas, pulling, spawn timers, camp spots
